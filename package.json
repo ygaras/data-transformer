@@ -4,7 +4,7 @@
   "description": "Apply Transformations to data sets ",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/all.js"
+    "test": "node test/all.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/ygaras/data-transformer/issues"
   },
-  "homepage": "https://github.com/ygaras/data-transformer#readme"
+  "homepage": "https://github.com/ygaras/data-transformer#readme",
+  "dependencies": {
+    "csv": "^5.1.1",
+    "csv-parse": "^4.3.3"
+  }
 }

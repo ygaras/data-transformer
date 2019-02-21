@@ -1,0 +1,11 @@
+{
+  "transformations" : [
+    {
+      "name" : "rename",
+      "parameters" : {
+        "source" : ["product id", "product price"],
+        "target" : ["ProductId", "ProductPrice"]
+      }
+    }
+  ]
+}
