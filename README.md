@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [data-transformer](#data-transformer)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration Syntax](#configuration-syntax)
+- [TODO](#todo)
+- [Technology Choices](#technology-choices)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # data-transformer
 
 
@@ -177,8 +190,5 @@ And a config file to load such a transformer would be:
 ```
 Check ```lib/transformers/``` to see how existing transformers are implemented. The engine in index.js loads the json config file and creates read streams of the input csv and a write stream for the output csv file. Each record read, is read as a json object. Transformers defined in the config file are loaded one after the other, passed the defined parameters and the input json object holding the data. The output of each transformer is provided as an input to the following transformer till all transformers defined in the config are consumed. If one transformer fails to parse certain row, the failed transformer, transformer parameters and input data will be logged and execution will continue to the next row.
 
-## Technology Choice
+# Technology Choices
 Node.js is a good tool to quickly have such a project functioning. It also natively supports json which saves a lot of boilerplate code.  Node.js stream is also a good fit since it efficiently allows dealing with large data and it can easily be changes to read from or write to any other data store like a database or some remote store. 
-
-
-
