@@ -10,15 +10,15 @@ fs.readdir(__dirname + '/fixtures', (err, files) => {
 });
 
 function runTest(test) {
-  log.d('Running test ' + test);
+  
   let testPath = __dirname + '/fixtures/' + test + '/',
     configFile = testPath + 'config.json',
     inputFile = testPath + 'input.csv',
     expectedFile = testPath + 'expected.csv',
-    outputFile = __dirname + '/' + 'output.csv';
+    actual = testPath + 'actual.csv';
   
-  transformer.transform(inputFile, outputFile, configFile, (err) => {
-    let outputFileContent = fs.readFileSync(outputFile, {encoding : 'utf8'}),
+  transformer.transform(inputFile, actual, configFile, (err) => {
+    let outputFileContent = fs.readFileSync(actual, {encoding : 'utf8'}),
       expectedFileContent = fs.readFileSync(expectedFile, {encoding : 'utf8'}),
       configFileContent = fs.readFileSync(configFile),
       inputFileContent = fs.readFileSync(inputFile);
@@ -36,13 +36,13 @@ ${configFileContent}
 expected:
 ${expectedFileContent}
 
-output:
+actual:
 ${outputFileContent}
 
       `);
       process.exit(1);
     } else {
-      log.d("Test PASSED");
+      log.d(`${test} TEST PASSED`);
     }
     
     

@@ -1,0 +1,11 @@
+{
+  "transformations" : [
+    {
+      "name" : "add",
+      "parameters" : {
+        "field" : "Date",
+        "format" : "${year}-${month}-${day}"
+      }
+    }
+  ]
+}
