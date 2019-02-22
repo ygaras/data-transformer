@@ -7,9 +7,7 @@ function prettyJson(inputJson) {
   return JSON.stringify(inputJson, null, 2);
 }
 
-// TODO add convenience API that accepts actual data instead of files
-// TODO add stats about number of records imported and update console for large data sets
-// TODO add test for large data set
+// TODO add convenience API that accepts json data or streams instead of files
 module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
   var options = JSON.parse(fs.readFileSync(optionsFile));
   

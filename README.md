@@ -25,14 +25,21 @@ Options:
 To install the npm module locally to a project:
 
 ```
-$ npm install git+https://git@github.com/ygaras/data-transformer
+$ npm install --save git+https://git@github.com/ygaras/data-transformer
+```
+The exported transform requires the pathes for the input csv file, output csv file and the configuration holding the transformations.
+```
+const dataTransformer = require('data-transformer');
+dataTransformer.transform('input.csv', 'output.csv', 'options.json', (err, result) => {
+    if(err) console.warn(err);
+    console.log(result);
+})
 ```
 
 # Usage
 You can clone the repo to make it easier to access the tests and see various examples of how to transform data.
 ```
 $ git clone https://github.com/ygaras/data-transformer.git && cd  data-transformer && npm install
-$ npm test
 $ npm test
 
 > data-transformer@0.0.1 test /Users/ygaras/git/temp/data-transformer
@@ -80,7 +87,7 @@ The previous transformation instructs data-transformer to rename columns "produc
 **WARNNING**: Don't process a configuration file from an untrusted source. The module is vulnerable to a remote code execution exploit. 
 Below is a list of all possible transformations and configuration options.
 
-**enableTrace**: Set it to true while authoring your transformations. It will output debug messages as transformations are applied from one stage to another. Transformations are applied sequentially after each other, so the output of one transformation is the input to the next one. If a field is deleted in a certain transformation, it will no longer be available to the following transformer.
+**enableTrace**: Set it to true while authoring your transformations. It will output debug messages as transformations are applied from one stage to another. Transformations are applied sequentially, so the output of one transformation is the input to the next one. If a field is deleted in a certain transformation, it will no longer be available to the following transformer.
 
 **rename**: Renames column names.
 add: Adds one new field with the specified target name. The format string is executed directly as a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) taking values from input columns. This can be exploited to execute arbitrary code.
@@ -140,4 +147,39 @@ $ cat test/fixtures/etl/config.json
   ]
 }
 ```
+
+TODO
+1-	Better parsing and validation of input data. Dates and numbers parsing should be done by libraries or modules created for the job, moment.js for Dates, something similar for integers and decimals.
+2-	Input validation and parameters checking for each transformer.
+3-	Get rid of input that is used in JavaScript template literal. This is very dangerous and allows remote code execution.
+4-	Add convenience API that accepts streams or json data instead of file paths.
+5-	Handle field names with spaces
+6-	The validation transformer needs to be rewritten.
+
+
+Architecture
+Data-transformer has a simple and a straight forward architecture. Each transformer is a nodejs module that exports a function that receives a json object with row information and parameters object that has configuration specific to this transformer. The simplest ‘noop’ transformer would be:
+
+```
+module.exports = function(input, options) {
+  return input;
+}
+```
+And a config file to load such a transformer would be:
+```
+{
+
+  "transformations" : [
+    {
+      "name" : " noop"
+    }
+}
+
+```
+Check lib/transformers/ to see how existing transformers are implemented. The engine in index.js, loads the json config file and creates read and write streams of the input csv and output csv file. Each record read, is read as a json object. Transformers defined in the config file are loaded one after the other, passed the defined parameters and the input json object holding the data. The output of each transformer is provided as an input to the following transformer till all transformers are done processing. If one transformer fails to parse certain row, the failed transformer, transformer parameters and input data will be logged and execution will continue to the next row.
+
+Technology Choices
+Nodejs is a good tool to quickly have such a project functioning. It also natively supports json which saves a lot of boilerplate code.  Node.js stream is also a good fit since it efficiently allows dealing with large data and it can easily be changes to read from or write to any other data store like a database or some remote store.
+
+
 
