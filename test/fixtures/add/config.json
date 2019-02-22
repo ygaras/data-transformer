@@ -3,7 +3,7 @@
     {
       "name" : "add",
       "parameters" : {
-        "field" : "Date",
+        "target" : "Date",
         "format" : "${year}-${month}-${day}"
       }
     }

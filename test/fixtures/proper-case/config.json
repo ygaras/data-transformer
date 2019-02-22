@@ -1,0 +1,10 @@
+{
+  "transformations" : [
+    {
+      "name" : "proper-case",
+      "parameters" : {
+        "source" : ["Product id"]
+      }
+    }
+  ]
+}
