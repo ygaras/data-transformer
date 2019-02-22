@@ -22,8 +22,12 @@ function runTest(test) {
       configFileContent = fs.readFileSync(configFile),
       inputFileContent = fs.readFileSync(inputFile);
     
-    
-    if (actualFileContent !== expectedFileContent) {
+    for (var i  = 0; i < actualFileContent.length; i++) {
+      if (actualFileContent.charAt(i) != expectedFileContent.charAt(i)) {
+        console.log(`Content is different at char number ${i}, ${actualFileContent.charAt(i)} != ${expectedFileContent.charAt(i)}`);
+      }
+    }
+    if (actualFileContent != expectedFileContent) {
       log.d(`${test} FAILED:
       
 input:
