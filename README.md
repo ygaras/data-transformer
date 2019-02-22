@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.com/ygaras/data-transformer.svg?branch=master)](https://travis-ci.com/ygaras/data-transformer)
 
 
-Data transformer applies series of transformations on csv files to change it from one format to another. It uses [CSV Parse](https://github.com/adaltas/node-csv-parse) for parsing the csv data using nodejs [Streams](https://nodejs.org/api/stream.html) allowing it to deal with large amount of data effectively. 
+Data transformer applies series of transformations on csv files to change it from one format to another. It uses [CSV Parse](https://github.com/adaltas/node-csv-parse) for parsing the csv data using nodejs [Streams](https://nodejs.org/api/stream.html) allowing it to deal with large amount of data efficiently. 
 
 # Installation
 data-transformer can be used as a command line tool or as an npm module. The module was developed and tested using node.js v10.15.1. For global command line installation:
@@ -97,7 +97,6 @@ add: Adds one new field with the specified target name. The format string is exe
 **proper-case**: Format the column value to be a proper cased string.
 
 **validate**: Makes sure row values can be parsed as valid data types. If a row fails validation, messages will be logged and the transformation will continue to next row.
-```
 
 ```
 $ cat test/fixtures/etl/config.json 
@@ -148,17 +147,17 @@ $ cat test/fixtures/etl/config.json
 }
 ```
 
-TODO
-1-	Better parsing and validation of input data. Dates and numbers parsing should be done by libraries or modules created for the job, moment.js for Dates, something similar for integers and decimals.
-2-	Input validation and parameters checking for each transformer.
-3-	Get rid of input that is used in JavaScript template literal. This is very dangerous and allows remote code execution.
-4-	Add convenience API that accepts streams or json data instead of file paths.
-5-	Handle field names with spaces
-6-	The validation transformer needs to be rewritten.
+# TODO
+1. Better parsing and validation of input data. Dates and numbers parsing should be done by libraries or modules created for the job, moment.js for Dates, something similar for integers and decimals.
+1. Input validation and parameters checking for each transformer.
+1. Get rid of input that is used in JavaScript template literal. This is very dangerous and allows remote code execution.
+1. Add convenience API that accepts streams or json data instead of file paths.
+1. Handle field names with spaces.
+1. The validation transformer needs to be rewritten.
 
 
-Architecture
-Data-transformer has a simple and a straight forward architecture. Each transformer is a nodejs module that exports a function that receives a json object with row information and parameters object that has configuration specific to this transformer. The simplest ‘noop’ transformer would be:
+#Architecture
+Data-transformer has a simple and a straight forward architecture. Each transformer is a nodejs module that exports a function that receives a json object with column names and row values and a parameter object that has parameters specific to this transformer. The simplest 'noop' transformer would be:
 
 ```
 module.exports = function(input, options) {
@@ -176,10 +175,10 @@ And a config file to load such a transformer would be:
 }
 
 ```
-Check lib/transformers/ to see how existing transformers are implemented. The engine in index.js, loads the json config file and creates read and write streams of the input csv and output csv file. Each record read, is read as a json object. Transformers defined in the config file are loaded one after the other, passed the defined parameters and the input json object holding the data. The output of each transformer is provided as an input to the following transformer till all transformers are done processing. If one transformer fails to parse certain row, the failed transformer, transformer parameters and input data will be logged and execution will continue to the next row.
+Check ```lib/transformers/``` to see how existing transformers are implemented. The engine in index.js loads the json config file and creates read streams of the input csv and a write stream for the output csv file. Each record read, is read as a json object. Transformers defined in the config file are loaded one after the other, passed the defined parameters and the input json object holding the data. The output of each transformer is provided as an input to the following transformer till all transformers defined in the config are consumed. If one transformer fails to parse certain row, the failed transformer, transformer parameters and input data will be logged and execution will continue to the next row.
 
-Technology Choices
-Nodejs is a good tool to quickly have such a project functioning. It also natively supports json which saves a lot of boilerplate code.  Node.js stream is also a good fit since it efficiently allows dealing with large data and it can easily be changes to read from or write to any other data store like a database or some remote store.
+## Technology Choice
+Node.js is a good tool to quickly have such a project functioning. It also natively supports json which saves a lot of boilerplate code.  Node.js stream is also a good fit since it efficiently allows dealing with large data and it can easily be changes to read from or write to any other data store like a database or some remote store. 
 
 
 
