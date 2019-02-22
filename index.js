@@ -22,8 +22,18 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
     writeStream = fs.createWriteStream(outputFile);
   
   let headerWritten = false;
+  let progress = {
+    read : 0, written : 0, skipped : 0
+  };
   const streamTransformer = streamTransform(function(record, callback) {
     let inputRecord = record;
+    progress.read++;
+  
+    function logProgress() {
+      log.d(`Read ${progress.read} records, wrote ${progress.written} and skipped ${progress.skipped}`);
+    }
+    
+    
     for (var transformationKey in options.transformations) {
       var transformation = options.transformations[transformationKey];
       if (options.enableTrace) {
@@ -50,10 +60,15 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
         data = Object.keys(record).join(',') +  data;
         headerWritten = true;
       }
+      progress.written++;
+      if (progress.written % 1000 == 0) {
+        logProgress();
+      }
       callback(null, data);
-      // writeStream.write(data);
+      
     } else {
       log.d(`Input data will be skipped ${Object.values(inputRecord).join(',')}`);
+      progress.skipped++;
       callback(null, null);
     }
     
@@ -62,16 +77,13 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
   parser.on('error', function (error) {
     log.w(`Failed to parse file ${inputFile}`);
     log.w(error);
-    done();
+    done(error, progress);
   });
   
-  // streamTransformer.on('finish', function() {
-  //   writeStream.close();
-  //   done();
-  // });
-  
-  
-  writeStream.on('finish', done);
+  writeStream.on('finish', function() {
+    done(null, progress);
+    
+  });
   readStream.pipe(parser).pipe(streamTransformer).pipe(writeStream);
 }
 
