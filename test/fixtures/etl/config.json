@@ -1,0 +1,46 @@
+{
+  "enableTrace" : false,
+  "transformations" : [
+    {
+      "name" : "rename",
+      "parameters" : {
+        "source" : ["Order Number", "Product Number", "Count", "Product Name"],
+        "target" : ["OrderID", "ProductId", "Quantity", "ProductName"]
+      }
+    },
+    {
+      "name" : "add",
+      "parameters" : {
+        "target" : "OrderDate",
+        "format" : "${Year}-${Month}-${Day}"
+      }
+    },
+    {
+      "name" : "add",
+      "parameters" : {
+        "target" : "Unit",
+        "format" : "kg"
+      }
+    },
+    {
+      "name" : "delete",
+      "parameters" : {
+        "source" : ["Year","Month","Day","Extra Col1","Extra Col2","Empty Column"]
+      }
+    },
+    {
+      "name" : "proper-case",
+      "parameters" : {
+        "source" : ["ProductName"]
+      }
+    },
+    {
+      "name" : "validate",
+      "parameters" : {
+        "source" : ["OrderID", "OrderDate", "ProductId", "ProductName", "Quantity", "Unit"],
+        "type" : ["Int", "DateTime", "String", "String", "Float", "String"]
+      }
+    }
+  ]
+}
+
