@@ -18,12 +18,12 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
     columns : true
   });
   
-  
   const readStream = fs.createReadStream(inputFile),
     writeStream = fs.createWriteStream(outputFile);
   
   let headerWritten = false;
   const streamTransformer = streamTransform(function(record, callback) {
+    let inputRecord = record;
     for (var transformationKey in options.transformations) {
       var transformation = options.transformations[transformationKey];
       if (options.enableTrace) {
@@ -50,7 +50,11 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
         data = Object.keys(record).join(',') +  data;
         headerWritten = true;
       }
-      writeStream.write(data);
+      callback(null, data);
+      // writeStream.write(data);
+    } else {
+      log.d(`Input data will be skipped ${Object.values(inputRecord).join(',')}`);
+      callback(null, null);
     }
     
   });
@@ -61,11 +65,13 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
     done();
   });
   
-  streamTransformer.on('finish', function() {
-    writeStream.close();
-    done();
-  });
+  // streamTransformer.on('finish', function() {
+  //   writeStream.close();
+  //   done();
+  // });
   
+  
+  writeStream.on('finish', done);
   
   readStream.pipe(parser).pipe(streamTransformer).pipe(writeStream);
 }

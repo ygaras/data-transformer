@@ -1,5 +1,5 @@
 {
-  "enableTrace" : true,
+  "enableTrace" : false,
   "transformations" : [
     {
       "name" : "validate",
