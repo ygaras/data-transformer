@@ -72,6 +72,6 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
   
   
   writeStream.on('finish', done);
-  
   readStream.pipe(parser).pipe(streamTransformer).pipe(writeStream);
 }
+

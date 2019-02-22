@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ygaras/data-transformer#readme",
   "dependencies": {
+    "commander": "^2.19.0",
     "csv": "^5.1.1"
   }
 }
