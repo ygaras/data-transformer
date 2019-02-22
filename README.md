@@ -1,7 +1,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [data-transformer](#data-transformer)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration Syntax](#configuration-syntax)
@@ -12,9 +11,7 @@
 
 # data-transformer
 
-
 [![Build Status](https://travis-ci.com/ygaras/data-transformer.svg?branch=master)](https://travis-ci.com/ygaras/data-transformer)
-
 
 Data transformer applies series of transformations on csv files to change it from one format to another. It uses [CSV Parse](https://github.com/adaltas/node-csv-parse) for parsing the csv data using nodejs [Streams](https://nodejs.org/api/stream.html) allowing it to deal with large amount of data efficiently. 
 
