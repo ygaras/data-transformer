@@ -18,13 +18,13 @@ function runTest(test) {
     actual = testPath + 'actual.csv';
   
   transformer.transform(inputFile, actual, configFile, (err) => {
-    let outputFileContent = fs.readFileSync(actual, {encoding : 'utf8'}),
+    let actualFileContent = fs.readFileSync(actual, {encoding : 'utf8'}),
       expectedFileContent = fs.readFileSync(expectedFile, {encoding : 'utf8'}),
       configFileContent = fs.readFileSync(configFile),
       inputFileContent = fs.readFileSync(inputFile);
     
     
-    if (outputFileContent !== expectedFileContent) {
+    if (actualFileContent !== expectedFileContent) {
       log.d(`${test} FAILED:
       
 input:
@@ -37,14 +37,14 @@ expected:
 ${expectedFileContent}
 
 actual:
-${outputFileContent}
+${actualFileContent}
 
       `);
       process.exit(1);
     } else {
       log.d(`${test} TEST PASSED`);
     }
-    
+    fs.unlinkSync(actual);
     
   });
   

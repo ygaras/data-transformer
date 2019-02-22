@@ -1,0 +1,10 @@
+{
+  "transformations" : [
+    {
+      "name" : "delete",
+      "parameters" : {
+        "source" : ["Extra col1", "Extra col2"]
+      }
+    }
+  ]
+}
