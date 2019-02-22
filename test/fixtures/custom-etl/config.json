@@ -1,0 +1,8 @@
+{
+  "transformations" : [
+    {
+      "name" : "custom-etl"
+    }
+  ]
+}
+
