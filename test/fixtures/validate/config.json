@@ -1,0 +1,12 @@
+{
+  "enableTrace" : true,
+  "transformations" : [
+    {
+      "name" : "validate",
+      "parameters" : {
+        "source" : ["product id", "product count", "date", "price"],
+        "type" : ["String", "Int", "DateTime", "Float"]
+      }
+    }
+  ]
+}

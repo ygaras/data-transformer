@@ -7,7 +7,9 @@ function prettyJson(inputJson) {
   return JSON.stringify(inputJson, null, 2);
 }
 
-
+// TODO add convenience API that accepts actual data instead of files
+// TODO add stats about number of records imported and update console for large data sets
+// TODO add test for large data set
 module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
   var options = JSON.parse(fs.readFileSync(optionsFile));
   
@@ -22,28 +24,41 @@ module.exports.transform = (inputFile, outputFile, optionsFile, done) => {
   
   let headerWritten = false;
   const streamTransformer = streamTransform(function(record, callback) {
-    options.transformations.forEach((transformation) => {
-      // TODO add trace level logs to help with authoring the config file
-      // TODO add error handling for transformers
-      
+    for (var transformationKey in options.transformations) {
+      var transformation = options.transformations[transformationKey];
       if (options.enableTrace) {
         log.d(`About to apply transformation: ${transformation.name} with config ${prettyJson(transformation.parameters)}`);
-        log.d(`Before: ${prettyJson(record)}`);
+        log.d(`Before ${transformation.name} ${prettyJson(record)}`);
       }
       
-      record = require('./lib/trasnformers/' + transformation.name)(record, transformation.parameters);
-      
+      try {
+        record = require('./lib/trasnformers/' + transformation.name)(record, transformation.parameters);
+      } catch (exception) {
+        log.w(`Transformer ${transformation.name} failed with options \n ${prettyJson(transformation.parameters)} failed for input \n ${prettyJson(record)}`);
+        log.w(exception);
+        record = null;
+        break;
+      }
+  
       if (options.enableTrace) {
-        log.d(`after: ${prettyJson(record)}`);
+        log.d(`After ${transformation.name}  ${prettyJson(record)}`);
       }
-    });
-    
-    var data = '\n' + Object.values(record).join(',');
-    if (!headerWritten) {
-      data = Object.keys(record).join(',') +  data;
-      headerWritten = true;
     }
-    writeStream.write(data);
+    if (typeof record == 'object' && record != null) {
+      var data = '\n' + Object.values(record).join(',');
+      if (!headerWritten) {
+        data = Object.keys(record).join(',') +  data;
+        headerWritten = true;
+      }
+      writeStream.write(data);
+    }
+    
+  });
+  
+  parser.on('error', function (error) {
+    log.w(`Failed to parse file ${inputFile}`);
+    log.w(error);
+    done();
   });
   
   streamTransformer.on('finish', function() {

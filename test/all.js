@@ -2,15 +2,14 @@ const fs = require('fs'),
   transformer = require('../index'),
   log = require('../lib/util/logger').getLogger('Test');
 
-
 fs.readdir(__dirname + '/fixtures', (err, files) => {
   files.forEach(file => {
     runTest(file);
   });
 });
 
+// TODO add test for large csv file
 function runTest(test) {
-  
   let testPath = __dirname + '/fixtures/' + test + '/',
     configFile = testPath + 'config.json',
     inputFile = testPath + 'input.csv',
@@ -49,4 +48,3 @@ ${actualFileContent}
   });
   
 }
-

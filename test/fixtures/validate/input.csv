@@ -1,0 +1,7 @@
+product id,product count,date,price
+ID6768,99,2019-1-11,13.02
+ID6768,faileValidation1,2019-30-11,13.02
+ID6768,10,2019-30-11,13.02
+ID6768,30,2019-11-30,faileValidation2
+ID6768,30,2019-11-30,20/04
+ShouldPass,99,2019-1-11,13.02
