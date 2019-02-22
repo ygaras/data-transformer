@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.com/ygaras/data-transformer.svg?branch=master)](https://travis-ci.com/ygaras/data-transformer)
 
 
-Data transformer applies series of transformations on csv files to change it from one formate to another. It uses [CSV Parse](https://github.com/adaltas/node-csv-parse) for parsing the csv data using nodejs [Streams](https://nodejs.org/api/stream.html) allowing it to deal with large amount of data effictively. 
+Data transformer applies series of transformations on csv files to change it from one format to another. It uses [CSV Parse](https://github.com/adaltas/node-csv-parse) for parsing the csv data using nodejs [Streams](https://nodejs.org/api/stream.html) allowing it to deal with large amount of data effectively. 
 
 # Installation
 data-transformer can be used as a command line tool or as an npm module. The module was developed and tested using node.js v10.15.1. For global command line installation:
@@ -29,7 +29,7 @@ $ npm install git+https://git@github.com/ygaras/data-transformer
 ```
 
 # Usage
-You can clone the repo to make it easier to access the tests and see variaus examples of how to transform data
+You can clone the repo to make it easier to access the tests and see various examples of how to transform data.
 ```
 $ git clone https://github.com/ygaras/data-transformer.git && cd  data-transformer && npm install
 $ npm test
@@ -74,5 +74,70 @@ ProductId,ProductPrice
 ID6768, 99.99
 ID67238, 99.92
 ```
-The previous transformation instructs data-transformer to rename columns "product id" and "product price" to "ProductId", "ProductPrice" respectively. 
+The previous transformation instructs data-transformer to rename columns "product id" and "product price" to "ProductId" and "ProductPrice" respectively. 
+
+# Configuration Syntax
+**WARNNING**: Don't process a configuration file from an untrusted source. The module is vulnerable to a remote code execution exploit. 
+Below is a list of all possible transformations and configuration options.
+
+**enableTrace**: Set it to true while authoring your transformations. It will output debug messages as transformations are applied from one stage to another. Transformations are applied sequentially after each other, so the output of one transformation is the input to the next one. If a field is deleted in a certain transformation, it will no longer be available to the following transformer.
+
+**rename**: Renames column names.
+add: Adds one new field with the specified target name. The format string is executed directly as a [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) taking values from input columns. This can be exploited to execute arbitrary code.
+
+**delete**: Removes columns.
+
+**proper-case**: Format the column value to be a proper cased string.
+
+**validate**: Makes sure row values can be parsed as valid data types. If a row fails validation, messages will be logged and the transformation will continue to next row.
+```
+
+```
+$ cat test/fixtures/etl/config.json 
+{
+  "enableTrace" : false,
+  "transformations" : [
+    {
+      "name" : "rename",
+      "parameters" : {
+        "source" : ["Order Number", "Product Number", "Count", "Product Name"],
+        "target" : ["OrderID", "ProductId", "Quantity", "ProductName"]
+      }
+    },
+    {
+      "name" : "add",
+      "parameters" : {
+        "target" : "OrderDate",
+        "format" : "${Year}-${Month}-${Day}"
+      }
+    },
+    {
+      "name" : "add",
+      "parameters" : {
+        "target" : "Unit",
+        "format" : "kg"
+      }
+    },
+    {
+      "name" : "delete",
+      "parameters" : {
+        "source" : ["Year","Month","Day","Extra Col1","Extra Col2","Empty Column"]
+      }
+    },
+    {
+      "name" : "proper-case",
+      "parameters" : {
+        "source" : ["ProductName"]
+      }
+    },
+    {
+      "name" : "validate",
+      "parameters" : {
+        "source" : ["OrderID", "OrderDate", "ProductId", "ProductName", "Quantity", "Unit"],
+        "type" : ["Int", "DateTime", "String", "String", "Float", "String"]
+      }
+    }
+  ]
+}
+```
 
