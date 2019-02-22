@@ -4,7 +4,7 @@
   "description": "Apply Transformations to data sets ",
   "main": "index.js",
   "bin": {
-    "data-transformer": "./bin/data-transformer.js"
+    "data-transformer": "./bin/data-transformer"
   },
   "scripts": {
     "test": "node test/all.js"
